@@ -1,0 +1,124 @@
+
+FORM RADIO
+
+<div class="form-group"> 
+     <label for="satuan" class="col-sm-2 col-xs-12 control-label">{{formLabel.satuan}}</label> 
+     <div class="col-sm-4 col-xs-12"> 
+ 
+            <section>
+
+        <div class="inline-group">
+        <label class="radio">
+        <input type="radio" ng-model="data.satuan" value="unit" name="RadioSatuan">
+        <i></i>Unit</label>
+        <label class="radio">
+        <input type="radio" ng-model="data.satuan"  value="kg" name="RadioSatuan">
+        <i></i>KG</label>
+        <label class="radio">
+        <input type="radio" ng-model="data.satuan"  value="liter" name="RadioSatuan">
+        <i></i>Liter</label>
+        </div>
+        </section>
+  </div> 
+</div> 
+
+#####################################
+FORM COMBOBOX
+
+<div class="form-group"> 
+    <label for="jenis_barang" class="col-sm-2 col-xs-12 control-label">{{formLabel.jenis_barang}} <b style="color:red;font-size:20px">*</b></label> 
+  <div class="col-sm-4 col-xs-12"> 
+      <input required name="jenis_barang"  kendo-combo-box k-options="cboAgama"   ng-model="data.jenis_barang"  xt-validate class="form-control" id="jenis_barang"   > 
+  </div> 
+</div>
+
+######################################
+$scope.cboAgama = {
+    placeholder: "Jenis Produk",
+    dataTextField: "text",
+    dataValueField: "value",
+    filter: "contains",
+    autoBind: true,
+    valuePrimitive: true,
+    dataSource: {
+        type: "jsonp",
+        transport: {
+            read: {
+                url: baseAddress + "appsystem/config/api?fnid=fc_SM_COMBO_DATA_show&dataparam={GroupID:'JENISPRODUK'}",
+            }
+        },
+        schema: {
+            data: 'data.Table',
+        }
+    }
+}
+
+######################################
+FORM DATE
+
+<div class="form-group"> 
+     <label for="TGL_LAHIR" class="col-sm-2 col-xs-12 control-label">{{formLabel.TGL_LAHIR}} <b style="color:red;font-size:20px">*</b></label> 
+     <div class="col-sm-4 col-xs-12"> 
+         <input required name="TGL_LAHIR"  options="datePickerConfig" kendo-date-picker  ng-model="data.TGL_LAHIR" type="datetime" xt-validate class="form-control" id="TGL_LAHIR" > 
+     </div>
+	 </div>
+	 
+#####################################
+TOMBOL PRINT
+
+<script type="text/x-kendo-template" id="button_action_status_produk">
+    <button class='btn btn-warning btn-xs' ng-click='grid_edit(this)' ng-disabled='!isAllowAccess("add")' data-toggle="tooltip" title="Edit">
+        <span class='fa fa-pencil'> </span>
+    </button>
+    <button class='btn btn-info btn-xs' ng-click='grid_print(this)' ng-disabled='!isAllowAccess("add")' data-toggle="tooltip" title="Print">
+        <span class='fa fa-print'> </span>
+    </button>
+    <button class='btn btn-danger btn-xs' ng-click='grid_delete(this)' ng-disabled='!isAllowAccess("delete")' data-toggle="tooltip" title="Delete">
+        <span class='fa fa-times'> </span>
+    </button>
+</script>
+
+######################################
+               var defaultActionButtonStatusProduk = function() {
+                return {
+                    command: [{
+                        template: kendo.template($("#button_action_status_produk").html())
+                    }],
+                    title: "Action",
+                    width: "100px",
+                    headerAttributes: {
+                        style: "text-align: center"
+                    },
+                    attributes: {
+                        style: "text-align: center"
+                    }
+                }
+            }
+
+######################################
+
+            $scope.grid_print = function(e) {
+                 var xNoMR=e.dataItem.id_produk;
+                         var url = baseAddress + "app/createreport";
+        
+ 
+                   
+                          var param = {
+                              ReportId: 'gudang/detail_produk1.trdx',
+                              Parameters: '{"NoMR" :"' + xNoMR + '"}'
+                          }
+                          var paramCaption="CETAK DATA PRODUK";
+                    
+           
+                  
+                  
+                    $http.post(url, param).then(function(response) {
+                        if (response.data.success == true) {
+                            var link = rptUrl + response.data.data;
+
+                            openWindow(link, paramCaption)
+                        }
+                    });
+
+                
+            }
